@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Management </title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/staff}" class="btn btn-success">List Staff</a>
+    <h2 class="text-center text-primary">EDIT STAFF</h2>
+    <form th:action="@{/staff/update/{id}(id=${staffId})}" method="POST" enctype="multipart/form-data" th:object="${StaffDTO}">
+        <div class="form-group">
+            <label>Staff Name: </label> <input type="text" class="form-control" th:field="*{name}">
+        </div>
+        <div class="form-group">
+            <label>Staff Phone: </label> <input type="text" class="form-control" th:field="*{phone}">
+        </div>
+        <div class="form-group">
+            <label>Staff Email: </label> <input type="text" class="form-control" th:field="*{email}">
+        </div>
+        <div class="form-group">
+            <label>Staff Salary: </label> <input type="number" class="form-control" th:field="*{salary}">
+        </div>
+        <div class="form-group">
+            <label>Gender</label>
+            <div class="radio">
+                <label class="checkbox-inline"><input type="radio" th:field="*{gender}" value="1" checked>Male</label>
+                <label class="checkbox-inline"><input type="radio" th:field="*{gender}" value="0">Female</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Photo</label> <input type="file" class="form-control" th:field="*{photo}">
+                <img alt="" th:src="@{'/getImage/' + ${urlImage}}" width="80" height="80"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+</body>
+</html>

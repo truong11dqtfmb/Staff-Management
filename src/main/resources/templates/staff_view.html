@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Management </title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container mb-5">
+    <a th:href="@{/staff}" class="btn btn-success">List Staff</a>
+    <h2 class="text-center text-primary">DETAIL STAFF</h2>
+    <div th:object="${StaffDTO}">
+        <div class="container">
+            <label>Staff Name: </label>
+            <span th:text="*{name}" class="text-primary"></span>
+        </div>
+        <!--        <div class="container">-->
+        <!--            <label>Staff Birthday: </label> <input type="date" format="dd/MM/yyyy" min="1997-01-01"max="2030-12-31" class="form-control" th:field="*{birthday}">-->
+        <!--        </div>-->
+        <div class="container">
+            <label>Staff Phone: </label>
+            <span th:text="*{phone}" class="text-primary"></span>
+        </div>
+        <div class="container">
+            <label>Staff Email: </label>
+            <span th:text="*{email}" class="text-primary"></span>
+        </div>
+        <div class="container">
+            <label>Staff Salary: </label>
+            <span th:text="*{salary}" class="text-primary"></span>
+        </div>
+        <div class="container">
+            <label>Gender</label>
+            <span th:text="*{gender ? 'Male' : 'Female'}" class="text-primary"></span>
+        </div>
+
+        <div class="container">
+            <label>Photo</label>
+            <img alt="" th:src="@{'/getImage/' + ${urlImage}}" width="220" height="220"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>
