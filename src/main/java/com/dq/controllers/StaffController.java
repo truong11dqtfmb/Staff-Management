@@ -9,6 +9,8 @@ import com.dq.utils.FileUploadUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -28,16 +30,17 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/staff")
-public class StaffController {
+class StaffController {
     @Autowired
     private StaffService staffService;
 
     @Autowired
     private ModelMapper modelMapper;
 
+    private static final Logger LOGGER = LogManager.getLogger(StaffController.class);
 
     @GetMapping(value = {"/page/{pageNumber}"})
-    public String page(Model model, @PathVariable(name = "pageNumber") int currentPage, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir){
+    String page(Model model, @PathVariable(name = "pageNumber") int currentPage, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir) {
         Page<Staff> page = staffService.pagefindAll(currentPage, sortField, sortDir);
         long totalItem = page.getTotalElements();
         int totalPages = page.getTotalPages();
@@ -54,33 +57,30 @@ public class StaffController {
     }
 
     @GetMapping("")
-    public String index(Model model) {
+    String index(Model model) {
 //        model.addAttribute("LIST_STAFF", staffService.findAll());
-//
-//        staffService.findAll().forEach(a -> System.out.println(a.getPhoto()));
-//
-//        System.out.println("LIST SUCCESS! ");
 //        return "staffs";
 
-        return page(model,1,"id","asc");
+        LOGGER.info("GET LIST STAFF");
+
+        return page(model, 1, "id", "asc");
     }
 
     @GetMapping("/create")
-    public String create(Model model) {
+    String create(Model model) {
         model.addAttribute("StaffDTO", new StaffDTO());
 
-        System.out.println("CREATE SUCCESS! ");
+        LOGGER.info("FORM ADD STAFF");
+
         return "staff_add";
     }
 
     @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("StaffDTO")  StaffDTO staffDTO, BindingResult bindingResult, Model model) throws Exception {
+    String save(@Valid @ModelAttribute("StaffDTO") StaffDTO staffDTO, BindingResult bindingResult, Model model) throws Exception {
         if (bindingResult.hasErrors()) {
             return "staff_add";
 
         } else {
-            System.out.println("StaffDTO: " + staffDTO);
-
             String image = null;
 
 //        randomNameFileImage
@@ -103,13 +103,14 @@ public class StaffController {
             entity.setPhoto(image);
 
             staffService.save(entity);
-            System.out.println("SAVE SUCCESS! ");
+
+            LOGGER.info("SAVE STAFF");
             return "redirect:/staff";
         }
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable("id") Long id) throws IOException {
+    String edit(Model model, @PathVariable("id") Long id) throws IOException {
         Optional<Staff> staff = staffService.findById(id);
 
 
@@ -130,20 +131,18 @@ public class StaffController {
 
         }
 
-        System.out.println("EDIT SUCCESS! ");
+        LOGGER.info("FORM EDIT STAFF");
         return "staff_edit";
     }
 
     @PostMapping("/update/{id}")
-    public String update(@Valid @ModelAttribute("StaffDTO") StaffDTO staffDTO,BindingResult bindingResult, Model model, @PathVariable("id") Long id) throws Exception {
+    String update(@Valid @ModelAttribute("StaffDTO") StaffDTO staffDTO, BindingResult bindingResult, Model model, @PathVariable("id") Long id) throws Exception {
         if (bindingResult.hasErrors()) {
             return "staff_edit";
 
         } else {
 
             Optional<Staff> optionalStaff = staffService.findById(id);
-
-            System.out.println("StaffDTO: " + staffDTO);
 
             String image = null;
             if (optionalStaff.isPresent()) {
@@ -174,13 +173,14 @@ public class StaffController {
 
                 staffService.save(entity);
             }
-            System.out.println("UPDATE SUCCESS! ");
+
+            LOGGER.info("UPDATE STAFF");
             return "redirect:/staff";
         }
     }
 
     @GetMapping("/view/{id}")
-    public String view(Model model, @PathVariable("id") Long id) throws IOException {
+    String view(Model model, @PathVariable("id") Long id) throws IOException {
         Optional<Staff> staff = staffService.findById(id);
 
         if (staff.isPresent()) {
@@ -192,20 +192,20 @@ public class StaffController {
             model.addAttribute("StaffDTO", new StaffDTO());
         }
 
-        System.out.println("VIEW SUCCESS! ");
+        LOGGER.info("VIEW DETAIL STAFF");
         return "staff_view";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    String delete(@PathVariable("id") Long id) {
         staffService.deleteById(id);
 
-        System.out.println("DELETE SUCCESS! ");
+        LOGGER.info("DELETE STAFF");
         return "redirect:/staff";
     }
 
     @GetMapping("/search")
-    public String search(Model model, @RequestParam("key_search") Optional<String> key_search) {
+    String search(Model model, @RequestParam("key_search") Optional<String> key_search) {
         if (key_search.isPresent()) {
             if (!key_search.get().isBlank()) {
                 model.addAttribute("LIST_STAFF", staffService.search(key_search.get()));
@@ -215,12 +215,15 @@ public class StaffController {
             return "search";
         }
         model.addAttribute("LIST_STAFF", staffService.findAll());
+
+
+        LOGGER.info("SEARCH STAFF");
         return "redirect:/staff";
 
     }
 
     @GetMapping("/exportToExcel")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
+    void exportToExcel(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
@@ -235,11 +238,11 @@ public class StaffController {
 
         staffExportExcel.export(response);
 
-        System.out.println("EXPORT TO EXCEL SUCCESS! ");
+        LOGGER.info("EXPORT TO EXCEL");
     }
 
     @GetMapping("/exportToCSV")
-    public void exportToCSV(HttpServletResponse response) throws IOException {
+    void exportToCSV(HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         String currentDateTime = dateFormatter.format(new Date());
@@ -262,11 +265,12 @@ public class StaffController {
         }
 
         csvWriter.close();
-        System.out.println("EXPORT TO CSV SUCCESS! ");
+
+        LOGGER.info("EXPORT TO CSV");
     }
 
     @GetMapping("/exportToPDF")
-    public void exportToPDF(HttpServletResponse response) throws IOException {
+    void exportToPDF(HttpServletResponse response) throws IOException {
         response.setContentType("application/pdf");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
@@ -280,5 +284,8 @@ public class StaffController {
         StaffExportPDF staffExportPDF = new StaffExportPDF(listStaffs);
 
         staffExportPDF.export(response);
+
+        LOGGER.info("EXPORT TO PDF");
+
     }
 }
