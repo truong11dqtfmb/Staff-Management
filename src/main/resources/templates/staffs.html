@@ -34,14 +34,13 @@
     <table class="table mt-5 table-striped table-hover">
         <thead class="thead-dark">
         <tr>
-            <th>STT</th>
-            <th>Name</th>
-            <th>Email</th>
-            <!--            <th>Birthday</th>-->
+            <th><a th:href="@{'/staff/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reSortDir}}">ID</a></th>
+            <th><a th:href="@{'/staff/page/' + ${currentPage} + '?sortField=name&sortDir=' + ${reSortDir}}">Name</a></th>
+            <th><a th:href="@{'/staff/page/' + ${currentPage} + '?sortField=email&sortDir=' + ${reSortDir}}">Email</a></th>
             <th>Gender</th>
-            <th>Phone</th>
+            <th><a th:href="@{'/staff/page/' + ${currentPage} + '?sortField=phone&sortDir=' + ${reSortDir}}">Phone</a></th>
             <th>Photo</th>
-            <th>Salary</th>
+            <th><a th:href="@{'/staff/page/' + ${currentPage} + '?sortField=salary&sortDir=' + ${reSortDir}}">Salary</a></th>
             <th>View</th>
             <th>Update</th>
             <th>Delete</th>
